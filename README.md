@@ -2,14 +2,23 @@
 
 This is an implementation of the [Chinese Whispers](https://doi.org/10.3115/1654758.1654774) clustering algorithm in Python. Since this library is based on [NetworkX](https://networkx.github.io/), it is simple to use.
 
-[![Unit Tests][github_tests_badge]][github_tests_link] [![Read the Docs][rtfd_badge]][rtfd_link] [![PyPI Version][pypi_badge]][pypi_link]
+[![Unit Tests][github_tests_badge]][github_tests_link] [![Read the Docs][rtfd_badge]][rtfd_link] [![PyPI Version][pypi_badge]][pypi_link] [![Conda Version][conda_badge]][conda_link]
 
-[github_tests_badge]: https://github.com/nlpub/chinese-whispers-python/workflows/Unit%20Tests/badge.svg?branch=master
-[github_tests_link]: https://github.com/nlpub/chinese-whispers-python/actions?query=workflow%3A%22Unit+Tests%22
+[github_tests_badge]: https://github.com/nlpub/chinese-whispers/actions/workflows/test.yml/badge.svg?branch=master
+[github_tests_link]: https://github.com/nlpub/chinese-whispers/actions/workflows/test.yml
 [rtfd_badge]: https://readthedocs.org/projects/chinese-whispers/badge/
 [rtfd_link]: https://chinese-whispers.readthedocs.io/
 [pypi_badge]: https://badge.fury.io/py/chinese-whispers.svg
 [pypi_link]: https://pypi.python.org/pypi/chinese-whispers
+[conda_badge]: https://anaconda.org/conda-forge/chinese-whispers/badges/version.svg
+[conda_link]: https://anaconda.org/conda-forge/chinese-whispers
+
+## Installation
+
+- [pip](https://pip.pypa.io/): `pip install chinese-whispers`
+- [Anaconda](https://docs.conda.io/en/latest/): `conda install conda-forge::chinese-whispers`
+
+## Usage
 
 Given a NetworkX graph `G`, this library can [cluster](https://en.wikipedia.org/wiki/Cluster_analysis) it using the following code:
 
@@ -33,7 +42,7 @@ chinese-whispers karate_club.tsv
 python3 -mchinese_whispers karate_club.tsv
 ```
 
-A more complete usage example is available in the [example notebook](https://github.com/nlpub/chinese-whispers-python/blob/master/example.ipynb) and at <https://nlpub.github.io/chinese-whispers-python/>.
+A more complete usage example is available in the [example notebook](https://github.com/nlpub/chinese-whispers/blob/master/docs/tutorial.ipynb).
 
 In case you require higher performance, please consider our Java implementation that also includes other graph clustering algorithms: <https://github.com/nlpub/watset-java>.
 
@@ -56,3 +65,7 @@ In case you require higher performance, please consider our Java implementation 
   language  = {english},
 }
 ```
+
+## Copyright
+
+Copyright (c) 2018&ndash;2026 [Dmitry Ustalov](https://github.com/dustalov). See [LICENSE](LICENSE) for details.

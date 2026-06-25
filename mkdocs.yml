@@ -1,0 +1,25 @@
+site_name: Chinese Whispers
+site_author: Dmitry Ustalov
+site_description: An implementation of the Chinese Whispers clustering algorithm.
+copyright: Copyright &copy; 2018&ndash;2026 Dmitry Ustalov
+repo_name: nlpub/chinese-whispers
+repo_url: https://github.com/nlpub/chinese-whispers
+theme:
+  name: material
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        inventories:
+        - https://docs.python.org/3/objects.inv
+        - https://networkx.org/documentation/stable/objects.inv
+        options:
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
+- mkdocs-jupyter:
+    include: ["tutorial.ipynb"]
+    execute: true
+    allow_errors: false
+    include_source: true

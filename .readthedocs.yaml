@@ -1,0 +1,16 @@
+version: 2
+formats:
+  - epub
+  - pdf
+build:
+  os: ubuntu-lts-latest
+  tools:
+    python: latest
+mkdocs:
+  configuration: mkdocs.yml
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs

@@ -1,65 +1,87 @@
-name: Unit Tests
+name: Tests
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  DO_NOT_TRACK: 1
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ startsWith(matrix.python-version, 'pypy') || startsWith(matrix.python-version, 'graalpy') }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
-
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "pypy3.11", "graalpy24.2" ]
     steps:
-    - uses: actions/checkout@v2.4.0
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2.3.1
+    - uses: actions/checkout@v7
+    - name: Set up Python
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        activate-environment: true
     - name: Install dependencies
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install pipenv
-        pipenv install --dev --system --skip-lock
+      run: uv sync --all-extras --dev
     - name: Write karate_club.tsv
       run: python3 -c 'import networkx as nx; nx.write_weighted_edgelist(nx.karate_club_graph(), "karate_club.tsv", delimiter="\t")'
-    - name: Lint with Mypy
-      run: mypy --ignore-missing-imports --strict .
-    - name: Lint with flake8
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --ignore=E402,F401 --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with unittest
-      run: python3 -m unittest discover
+    - if: matrix.python-version != '3.9'
+      name: Lint with Mypy
+      run: mypy .
+    - if: matrix.python-version != '3.9'
+      name: Lint with ty
+      run: ty check
+    - name: Lint with Ruff
+      run: ruff check
+    - name: Test with pytest
+      run: pytest
     - name: Run Module
       run: python3 -m chinese_whispers karate_club.tsv
     - name: Run CLI
       run: chinese-whispers karate_club.tsv
+    - if: matrix.python-version != '3.9'
+      name: Lint Jupyter with Mypy
+      run: nbqa mypy docs/*.ipynb
     - name: Run Jupyter
       run: |
         mkdir jupyter
-        jupyter nbconvert --to html --output jupyter/index.html --execute example.ipynb
+        jupyter nbconvert --to html --output tutorial.html --execute docs/tutorial.ipynb
+        mv docs/tutorial.html jupyter/
+    - name: Run MkDocs
+      run: mkdocs build --strict
     - name: Build
-      run: python3 -m build --sdist --wheel .
-    - name: Upload Pages
-      uses: peaceiris/actions-gh-pages@v3.8.0
+      run: |
+        python3 -m build --sdist --wheel .
+        twine check --strict dist/*
+    - name: Upload Jupyter
+      uses: actions/upload-artifact@v7
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./jupyter
-      if: matrix.python-version == '3.9' && github.ref == 'refs/heads/master'
+        name: jupyter
+        path: jupyter
+        if-no-files-found: error
+        retention-days:
+      if: matrix.python-version == '3.14'
   cff:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2.4.0
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+    - uses: actions/checkout@v7
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
       with:
-        ruby-version: ruby
-    - name: Install cff
-      run: gem install cff
+        enable-cache: false
     - name: Validate CITATION.cff
-      run: ruby -rcff -e 'CFF::File.validate!("CITATION.cff")'
+      run: uvx cffconvert --validate

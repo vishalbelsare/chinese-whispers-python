@@ -1,24 +1,34 @@
-__version__ = '0.7.5'
-__author__ = 'Dmitry Ustalov'
-__credits__ = ['Alexander Panchenko', 'Alexander Chambers', 'Frederik Wille']
-__license__ = 'MIT'
+"""
+Chinese Whispers.
+
+An implementation of the Chinese Whispers clustering algorithm.
+"""
 
 from .chinese_whispers import (
-    WEIGHTING,
-    top_weighting,
-    lin_weighting,
-    log_weighting,
+    UnknownWeightingError,
+    Weighting,
+    aggregate_clusters,
     chinese_whispers,
+    linear_weighting,
+    log_weighting,
     random_argmax,
-    aggregate_clusters
+    top_weighting,
 )
 
+__version__ = "0.10.0.rc1"
+__author__ = "Dmitry Ustalov"
+__credits__ = ["Alexander Panchenko", "Alexander Chambers", "Frederik Wille"]
+__copyright = "Copyright 2018-2026 Dmitry Ustalov"
+__license__ = "MIT"
+
 __all__ = [
-    'WEIGHTING',
-    'top_weighting',
-    'lin_weighting',
-    'log_weighting',
-    'chinese_whispers',
-    'random_argmax',
-    'aggregate_clusters'
+    "UnknownWeightingError",
+    "Weighting",
+    "__version__",
+    "aggregate_clusters",
+    "chinese_whispers",
+    "linear_weighting",
+    "log_weighting",
+    "random_argmax",
+    "top_weighting",
 ]
